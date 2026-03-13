@@ -3,235 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <title>您的电话来电了</title>
-
 <style>
 body{
-background:#c0392b;
-font-family:微软雅黑;
-color:white;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
+  background:#c0392b;
+  font-family:微软雅黑;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
 }
-
 .game{
-width:700px;
-background:#d32f2f;
-padding:30px;
-border-radius:25px;
-box-shadow:0 15px 30px rgba(0,0,0,0.3);
+  width:700px;
+  background:#d32f2f;
+  padding:30px;
+  border-radius:25px;
+  box-shadow:0 15px 30px rgba(0,0,0,0.3);
 }
-
 .title{
-text-align:center;
-font-size:28px;
-margin-bottom:10px;
+  text-align:center;
+  font-size:28px;
+  margin-bottom:10px;
 }
-
 .subtitle{
-text-align:center;
-font-size:14px;
-opacity:0.8;
-margin-bottom:25px;
+  text-align:center;
+  font-size:14px;
+  opacity:0.8;
+  margin-bottom:25px;
 }
-
 .stage{
-background:white;
-color:#333;
-padding:25px;
-border-radius:20px;
-min-height:120px;
-line-height:1.8;
+  background:white;
+  color:#333;
+  padding:25px;
+  border-radius:20px;
+  min-height:120px;
+  line-height:1.8;
 }
-
 .options{
-margin-top:20px;
-display:flex;
-flex-direction:column;
-gap:12px;
+  margin-top:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
-
 .btn{
-padding:15px;
-border-radius:15px;
-border:none;
-font-size:15px;
-cursor:pointer;
-background:white;
-color:#b71c1c;
-font-weight:bold;
+  padding:15px;
+  border-radius:15px;
+  border:none;
+  font-size:15px;
+  cursor:pointer;
+  background:white;
+  color:#b71c1c;
+  font-weight:bold;
 }
-
 .btn:hover{
-background:#b71c1c;
-color:white;
+  background:#b71c1c;
+  color:white;
 }
-
 .next{
-margin-top:20px;
-background:#ffb74d;
-border:none;
-padding:12px 30px;
-border-radius:30px;
-font-weight:bold;
-cursor:pointer;
+  margin-top:20px;
+  background:#ffb74d;
+  border:none;
+  padding:12px 30px;
+  border-radius:30px;
+  font-weight:bold;
+  cursor:pointer;
 }
-
 .result{
-margin-top:20px;
-padding:15px;
-border-radius:15px;
-display:none;
+  margin-top:20px;
+  padding:15px;
+  border-radius:15px;
+  display:none;
 }
-
 .success{background:#2e7d32;}
 .fail{background:#b71c1c;}
 </style>
 </head>
 
 <body>
-
 <div class="game">
-
-<div class="title">📞 您的电话来电了</div>
-<div class="subtitle">周三 20:15 · 独居 · 毕业2年 · 新能源公司项目助理</div>
-
-<div id="stage" class="stage"></div>
-
-<div id="options" class="options"></div>
-
-<div id="result" class="result"></div>
-
-<button id="next" class="next" style="display:none">继续</button>
-
+  <div class="title">📞 您的电话来电了</div>
+  <div class="subtitle">周三 20:15 · 独居 · 毕业2年 · 新能源公司项目助理</div>
+  <div id="stage" class="stage"></div>
+  <div id="options" class="options"></div>
+  <div id="result" class="result"></div>
+  <button id="next" class="next" style="display:none">继续</button>
 </div>
 
 <script>
-
 const API="https://script.google.com/macros/s/AKfycbyC6mB1KOOJ8mJg4VwIJQMC7F8oMd0c0XtE0ozLrleZQIW11L5hX-T9-fS5JrfYTFk/exec"
 
 let step=0
 let path=[]
 
 const story=[
-
 {
-text:`晚上20:15，你刚结束一天加班。
-手机突然响起，一个陌生号码。`,
+text:`晚上20:15，你刚结束一天加班。手机突然响起，一个陌生号码。`,
 opt:[
-{t:"接听电话",n:1,p:"接听"},
-{t:"不接陌生电话",e:"safe",p:"不接"}
+  {t:"接听电话",n:1,p:"接听"},
+  {t:"不接陌生电话",e:"safe",p:"不接"}
 ]
 },
-
 {
 text:`电话接通，对方直接叫出你的名字：
-
 “xxx（你的名字），不好意思这么晚打扰你”`,
 opt:[
-{t:"问对方是谁",n:2,p:"询问"},
-{t:"试探：王总吗？（声音很像王总）",n:3,p:"试探"}
+  {t:"问对方是谁",n:2,p:"询问"},
+  {t:"试探：王总吗？（声音很像王总）",n:3,p:"试探"}
 ]
 },
-
 {
 text:`对方停顿一下说：
-
 “我是谁，你连我声音都听不出来？”`,
 opt:[
-{t:"听不出来，我要核实一下，挂断电话",e:"safe",p:"核实"},
-{t:"是王总吧",n:4,p:"相信"}
+  {t:"听不出来，我要核实一下，挂断电话",e:"safe",p:"核实"},
+  {t:"是王总吧",n:4,p:"相信"}
 ]
 },
-
 {
 text:`对方语气严肃：
-
-“我现在接待了两位客户，
-有个项目需要处理一下，事情不好明说，然后我用的是我私人号码打给你，你存一下，另外明天上午你来一下我办公室。”这位领导是副总经理，职级大你两级，平常未保存电话和微信。`,
+“我现在接待了两位客户，有个项目需要处理一下，事情不好明说，然后我用的是我私人号码打给你，你存一下，另外明天上午你来一下我办公室。”`,
 opt:[
-{t:"继续听，答应明天去他办公室",n:5,p:"继续"},
-{t:"挂断去核实",e:"safe",p:"挂断"}
+  {t:"继续听，答应明天去他办公室",n:5,p:"继续"},
+  {t:"挂断去核实",e:"safe",p:"挂断"}
 ]
 },
-
 {
 text:`“王总”过了一个小时，开始又给你打电话。
-
 你刚挂电话，他立刻又打过来。
-
 “这事出现了点意外，现在需要处理，你先加我QQ，我发资料给你。”`,
 opt:[
-{t:"拒绝加QQ",e:"safe",p:"拒绝QQ"},
-{t:"添加QQ",n:6,p:"加QQ"}
+  {t:"拒绝加QQ",e:"safe",p:"拒绝QQ"},
+  {t:"添加QQ",n:6,p:"加QQ"}
 ]
 },
-
 {
-text:`QQ里，对方发来“合同截图”。
-
-并发语音：
-
-“客户款项没打过去，账户出现限额，这个客户很重要，现在需要尽快处理好，需要你先垫付一下4万元，明早来我办公室我用现金还你。”（因为平常也会有类似的情况，先垫付后还款）`,
+text:`QQ里，对方发来“合同截图”。并发语音：
+“客户款项没打过去，账户出现限额，这个客户很重要，现在需要尽快处理好，需要你先垫付一下4万元，明早来我办公室我用现金还你。”`,
 opt:[
-{t:"拒绝转账",e:"safe",p:"拒绝"},
-{t:"先转4万",n:7,p:"4万"}
+  {t:"拒绝转账",e:"safe",p:"拒绝"},
+  {t:"先转4万",n:6.1,p:"4万"}
 ]
 },
-
+// 新增节点：先转4万后，再转6万操作
 {
 text:`你转了4万元。
-
 “王总”立刻打QQ语音：
-
-“计划有变，
-客户金额要求先垫付10万，
-你再转6万。xx（你的名字），你是我器重的人，你帮我把事情先处理好”`,
+“计划有变，客户金额要求再垫付6万，你帮我先处理好这件事。”`,
 opt:[
-{t:"拒绝",e:"mid",p:"拒绝"},
-{t:"再转6万",n:8,p:"6万"}
+  {t:"拒绝",e:"mid",p:"拒绝"}, // 已损失4万
+  {t:"再转6万",n:7,p:"6万"}
 ]
 },
-
+// 玩家转6万后，剩余资金1万多
 {
-text:`你又转了6万元，此时已经转了你所有的流动资金，身上仅有1万多块钱。
-
+text:`你又转了6万元，此时已经转了你所有流动资金，身上仅有1万多块钱。
 第二日上午9点，“王总”再次电话轰炸：
-
-“客户改变了主意，原先只需要10万元去垫付，但因为这次合同处理需要加急，要求再垫付一些钱，把这个事情解决掉，很急，还差18.8万，
-你先垫付一下。”`,
+“客户改变了主意，还差18.8万，你先垫付一下。”`,
 opt:[
-{t:"开始怀疑并拒绝",e:"real",p:"拒绝"},
-{t:"继续转账",e:"bad",p:"18.8万"}
+  {t:"开始怀疑并拒绝",e:"real",p:"拒绝"}, // 已损失10万
+  {t:"继续转账",e:"bad",p:"18.8万"}        // 损失28.8万
 ]
 }
-
 ]
 
 const endText={
-
 safe:{
 title:"✅ 防骗成功",
 desc:"你保持警惕，没有给骗子机会。"
 },
-
 mid:{
 title:"⚠️ 已损失4万元",
-desc:"你转账4万后及时醒悟。"
+desc:"你转账4万后及时醒悟，避免进一步损失。"
 },
-
 real:{
 title:"⚠️ 已损失10万元",
-desc:"你被骗10万元后才意识到问题。"
+desc:"你转了4万+6万后才意识到问题，损失10万元。"
 },
-
 bad:{
 title:"💸 损失28.8万元",
-desc:"你完全相信骗子，造成巨大损失。"
+desc:"你完全相信骗子，造成巨大损失28.8万元。"
 }
-
 }
 
 const stage=document.getElementById("stage")
@@ -240,80 +192,53 @@ const result=document.getElementById("result")
 const next=document.getElementById("next")
 
 function load(){
-
-let s=story[step]
-
-stage.innerText=s.text
-options.innerHTML=""
-result.style.display="none"
-next.style.display="none"
-
-s.opt.forEach(o=>{
-
-let btn=document.createElement("button")
-btn.className="btn"
-btn.innerText=o.t
-
-btn.onclick=()=>choose(o)
-
-options.appendChild(btn)
-
-})
-
+  let s=story[step]
+  stage.innerText=s.text
+  options.innerHTML=""
+  result.style.display="none"
+  next.style.display="none"
+  s.opt.forEach(o=>{
+    let btn=document.createElement("button")
+    btn.className="btn"
+    btn.innerText=o.t
+    btn.onclick=()=>choose(o)
+    options.appendChild(btn)
+  })
 }
 
 function choose(o){
-
-path.push(o.p)
-
-if(o.e){
-
-showEnd(o.e)
-sendData(o.e)
-
-}else{
-
-result.style.display="block"
-result.className="result success"
-result.innerText="⚠️ 你继续操作"
-
-next.style.display="block"
-
-next.onclick=()=>{
-step=o.n
-load()
-}
-
-}
-
+  path.push(o.p)
+  if(o.e){
+    showEnd(o.e)
+    sendData(o.e)
+  }else{
+    result.style.display="block"
+    result.className="result success"
+    result.innerText="⚠️ 你继续操作"
+    next.style.display="block"
+    next.onclick=()=>{
+      step=o.n
+      load()
+    }
+  }
 }
 
 function showEnd(e){
-
-options.innerHTML=""
-stage.innerText=endText[e].title
-
-result.style.display="block"
-result.className="result fail"
-result.innerText=endText[e].desc
-
-next.style.display="block"
-next.innerText="重新体验"
-
-next.onclick=()=>location.reload()
-
+  options.innerHTML=""
+  stage.innerText=endText[e].title
+  result.style.display="block"
+  result.className="result fail"
+  result.innerText=endText[e].desc
+  next.style.display="block"
+  next.innerText="重新体验"
+  next.onclick=()=>location.reload()
 }
 
 function sendData(r){
-
-fetch(API+"?path="+encodeURIComponent(path.join("→"))+"&result="+r)
-
+  fetch(API+"?path="+encodeURIComponent(path.join("→"))+"&result="+r)
 }
 
 load()
-
 </script>
-
 </body>
 </html>
-
