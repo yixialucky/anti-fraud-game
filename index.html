@@ -1,154 +1,503 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>您的电话来电了</title>
 <style>
-body{background:#c0392b;font-family:微软雅黑;color:white;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}
-.game{width:700px;background:#d32f2f;padding:30px;border-radius:25px;box-shadow:0 15px 30px rgba(0,0,0,0.3);}
-.title{text-align:center;font-size:28px;margin-bottom:10px;}
-.subtitle{text-align:center;font-size:14px;opacity:0.8;margin-bottom:25px;}
-.stage{background:white;color:#333;padding:25px;border-radius:20px;min-height:120px;line-height:1.8;}
-.options{margin-top:20px;display:flex;flex-direction:column;gap:12px;}
-.btn{padding:15px;border-radius:15px;border:none;font-size:15px;cursor:pointer;background:white;color:#b71c1c;font-weight:bold;}
-.btn:hover{background:#b71c1c;color:white;}
-.next{margin-top:20px;background:#ffb74d;border:none;padding:12px 30px;border-radius:30px;font-weight:bold;cursor:pointer;}
-.result{margin-top:20px;padding:15px;border-radius:15px;display:none;}
-.success{background:#2e7d32;}
-.fail{background:#b71c1c;}
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #b71c1c, #d32f2f);
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .game {
+    width: 100%;
+    max-width: 760px;
+    background: rgba(211, 47, 47, 0.96);
+    padding: 28px;
+    border-radius: 26px;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(4px);
+  }
+
+  .title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.85;
+    margin-bottom: 16px;
+  }
+
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    background: rgba(255,255,255,0.18);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+  }
+
+  .progress-wrap {
+    width: 100%;
+    height: 10px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ffd54f, #ffb300);
+    transition: width 0.35s ease;
+  }
+
+  .stage {
+    background: #fff;
+    color: #333;
+    padding: 24px;
+    border-radius: 20px;
+    min-height: 140px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.04);
+    animation: fadeIn 0.25s ease;
+  }
+
+  .options {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn {
+    padding: 15px 16px;
+    border-radius: 15px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    background: #fff;
+    color: #b71c1c;
+    font-weight: 700;
+    transition: all 0.18s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+    background: #b71c1c;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+  }
+
+  .btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .action-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+
+  .next, .ghost {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.18s ease;
+  }
+
+  .next {
+    background: #ffb74d;
+    color: #5d2b00;
+  }
+
+  .next:hover {
+    transform: translateY(-1px);
+  }
+
+  .ghost {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+  }
+
+  .ghost:hover {
+    background: rgba(255,255,255,0.26);
+  }
+
+  .result {
+    margin-top: 18px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    display: none;
+    line-height: 1.8;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .success {
+    background: #2e7d32;
+  }
+
+  .warn {
+    background: #ef6c00;
+  }
+
+  .fail {
+    background: #b71c1c;
+  }
+
+  .trace {
+    margin-top: 12px;
+    font-size: 13px;
+    opacity: 0.9;
+    word-break: break-all;
+  }
+
+  .hint {
+    margin-top: 14px;
+    font-size: 13px;
+    opacity: 0.82;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 </style>
 </head>
 <body>
-<div class="game">
-  <div class="title">📞 您的电话来电了</div>
-  <div class="subtitle">周三 20:15 · 独居 · 毕业2年 · 新能源公司项目助理</div>
-  <div id="stage" class="stage"></div>
-  <div id="options" class="options"></div>
-  <div id="result" class="result"></div>
-  <button id="next" class="next" style="display:none">继续</button>
-</div>
+  <div class="game">
+    <div class="title">📞 您的电话来电了</div>
+    <div class="subtitle">周三 20:15 · 独居 · 毕业2年 · 新能源公司项目助理</div>
+
+    <div class="topbar">
+      <div id="stepBadge" class="badge">当前进度：0 / 0</div>
+      <div id="statusBadge" class="badge">状态：进行中</div>
+    </div>
+
+    <div class="progress-wrap">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+    <div id="stage" class="stage"></div>
+    <div id="options" class="options"></div>
+    <div id="result" class="result"></div>
+
+    <div class="action-row">
+      <button id="restartBtn" class="next" style="display:none;">重新体验</button>
+      <button id="traceBtn" class="ghost" style="display:none;">查看本次选择路径</button>
+    </div>
+
+    <div id="trace" class="trace" style="display:none;"></div>
+    <div class="hint">提示：凡是“领导用私人号码、要求保密、要求垫付、转到私人账户/QQ联系”的组合，都高度可疑。</div>
+  </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbyC6mB1KOOJ8mJg4VwIJQMC7F8oMd0c0XtE0ozLrleZQIW11L5hX-T9-fS5JrfYTFk/exec";
+  const API = "https://script.google.com/macros/s/AKfycbyC6mB1KOOJ8mJg4VwIJQMC7F8oMd0c0XtE0ozLrleZQIW11L5hX-T9-fS5JrfYTFk/exec";
 
-let step=0;
-let path=[];
+  // 用对象映射节点，避免数组下标错位
+  const story = {
+    start: {
+      text: `晚上20:15，你刚结束一天加班。手机突然响起，一个陌生号码。`,
+      options: [
+        { text: "接听电话", next: "identify", path: "接听" },
+        { text: "不接陌生电话", end: "safe", path: "不接" }
+      ]
+    },
 
-const story=[
-  {text:`晚上20:15，你刚结束一天加班。手机突然响起，一个陌生号码。`,
-   opt:[
-     {t:"接听电话",n:1,p:"接听"},
-     {t:"不接陌生电话",e:"safe",p:"不接"}
-   ]
-  },
-  {text:`电话接通，对方直接叫出你的名字：
+    identify: {
+      text: `电话接通，对方直接叫出你的名字：
 “xxx（你的名字），不好意思这么晚打扰你”`,
-   opt:[
-     {t:"问对方是谁",n:2,p:"询问"},
-     {t:"试探：王总吗？（声音很像王总）",n:3,p:"试探"}
-   ]
-  },
-  {text:`对方停顿一下说：
+      options: [
+        { text: "问对方是谁", next: "pressure", path: "询问" },
+        { text: "试探：王总吗？（声音很像王总）", next: "leader_task", path: "试探" }
+      ]
+    },
+
+    pressure: {
+      text: `对方停顿一下说：
 “我是谁，你连我声音都听不出来？”`,
-   opt:[
-     {t:"听不出来，我要核实一下，挂断电话",e:"safe",p:"核实"},
-     {t:"是王总吧",n:4,p:"相信"}
-   ]
-  },
-  {text:`对方语气严肃：
+      options: [
+        { text: "听不出来，我要核实一下，挂断电话", end: "safe", path: "核实" },
+        { text: "是王总吧", next: "leader_task", path: "相信" }
+      ]
+    },
+
+    leader_task: {
+      text: `对方语气严肃：
 “我现在接待了两位客户，有个项目需要处理一下，事情不好明说，然后我用的是我私人号码打给你，你存一下，另外明天上午你来一下我办公室。”`,
-   opt:[
-     {t:"继续听，答应明天去他办公室",n:5,p:"继续"},
-     {t:"挂断去核实",e:"safe",p:"挂断"}
-   ]
-  },
-  {text:`“王总”过了一个小时，开始又给你打电话。
+      options: [
+        { text: "继续听，答应明天去他办公室", next: "add_qq", path: "继续" },
+        { text: "挂断去核实", end: "safe", path: "挂断" }
+      ]
+    },
+
+    add_qq: {
+      text: `“王总”过了一个小时，开始又给你打电话。
 你刚挂电话，他立刻又打过来。
 “这事出现了点意外，现在需要处理，你先加我QQ，我发资料给你。”`,
-   opt:[
-     {t:"拒绝加QQ",e:"safe",p:"拒绝QQ"},
-     {t:"添加QQ",n:5,p:"加QQ"} // 正确跳到下一个节点：合同截图
-   ]
-  },
-  {text:`QQ里，对方发来“合同截图”。并发语音：
+      options: [
+        { text: "拒绝加QQ", end: "safe", path: "拒绝QQ" },
+        { text: "添加QQ", next: "contract", path: "加QQ" }
+      ]
+    },
+
+    contract: {
+      text: `QQ里，对方发来“合同截图”。并发语音：
 “客户款项没打过去，账户出现限额，这个客户很重要，现在需要尽快处理好，需要你先垫付一下4万元，明早来我办公室我用现金还你。”`,
-   opt:[
-     {t:"拒绝转账",e:"safe",p:"拒绝"},
-     {t:"先转4万",n:6,p:"4万"}
-   ]
-  },
-  {text:`你转了4万元。
+      options: [
+        { text: "拒绝转账", end: "safe", path: "拒绝" },
+        { text: "先转4万", next: "ask_more_6w", path: "4万" }
+      ]
+    },
+
+    ask_more_6w: {
+      text: `你转了4万元。
 “王总”立刻打QQ语音：
 “计划有变，客户金额要求再垫付6万，你帮我先处理好这件事。”`,
-   opt:[
-     {t:"拒绝",e:"mid",p:"拒绝"}, // 已损失4万
-     {t:"再转6万",n:7,p:"6万"}
-   ]
-  },
-  {text:`你又转了6万元，此时已经转了你所有流动资金，身上仅有1万多块钱。
+      options: [
+        { text: "拒绝", end: "mid", path: "拒绝" },
+        { text: "再转6万", next: "ask_more_188w", path: "6万" }
+      ]
+    },
+
+    ask_more_188w: {
+      text: `你又转了6万元，此时已经转了你所有流动资金，身上仅有1万多块钱。
 第二日上午9点，“王总”再次电话轰炸：
 “客户改变了主意，还差18.8万，你先垫付一下。”`,
-   opt:[
-     {t:"开始怀疑并拒绝",e:"real",p:"拒绝"}, // 已损失10万
-     {t:"继续转账",e:"bad",p:"18.8万"}        // 损失28.8万
-   ]
+      options: [
+        { text: "开始怀疑并拒绝", end: "real", path: "拒绝" },
+        { text: "继续转账", end: "bad", path: "18.8万" }
+      ]
+    }
+  };
+
+  const endings = {
+    safe: {
+      title: "✅ 防骗成功",
+      desc: "你保持了基本警惕，没有给骗子机会。",
+      cls: "success"
+    },
+    mid: {
+      title: "⚠️ 已损失4万元",
+      desc: "你在转账4万元后及时醒悟，避免了进一步损失。",
+      cls: "warn"
+    },
+    real: {
+      title: "⚠️ 已损失10万元",
+      desc: "你在转账4万和6万后才意识到问题，累计损失10万元。",
+      cls: "warn"
+    },
+    bad: {
+      title: "💸 损失28.8万元",
+      desc: "你完全相信了对方，最终造成巨大损失28.8万元。",
+      cls: "fail"
+    }
+  };
+
+  const orderedNodeIds = [
+    "start",
+    "identify",
+    "pressure",
+    "leader_task",
+    "add_qq",
+    "contract",
+    "ask_more_6w",
+    "ask_more_188w"
+  ];
+
+  const stageEl = document.getElementById("stage");
+  const optionsEl = document.getElementById("options");
+  const resultEl = document.getElementById("result");
+  const restartBtn = document.getElementById("restartBtn");
+  const traceBtn = document.getElementById("traceBtn");
+  const traceEl = document.getElementById("trace");
+  const stepBadgeEl = document.getElementById("stepBadge");
+  const statusBadgeEl = document.getElementById("statusBadge");
+  const progressBarEl = document.getElementById("progressBar");
+
+  let currentNodeId = "start";
+  let path = [];
+  let isLocked = false;
+  let ended = false;
+
+  function updateProgress() {
+    const idx = orderedNodeIds.indexOf(currentNodeId);
+    const currentStep = idx >= 0 ? idx + 1 : orderedNodeIds.length;
+    stepBadgeEl.textContent = `当前进度：${currentStep} / ${orderedNodeIds.length}`;
+    const percent = Math.min(100, Math.round((currentStep / orderedNodeIds.length) * 100));
+    progressBarEl.style.width = percent + "%";
   }
-];
 
-const endText={
-  safe:{title:"✅ 防骗成功",desc:"你保持警惕，没有给骗子机会。"},
-  mid:{title:"⚠️ 已损失4万元",desc:"你转账4万后及时醒悟，避免进一步损失。"},
-  real:{title:"⚠️ 已损失10万元",desc:"你转了4万+6万后才意识到问题，损失10万元。"},
-  bad:{title:"💸 损失28.8万元",desc:"你完全相信骗子，造成巨大损失28.8万元。"}
-};
+  function renderNode(nodeId) {
+    try {
+      const node = story[nodeId];
+      if (!node) {
+        throw new Error(`未找到剧情节点：${nodeId}`);
+      }
 
-const stage=document.getElementById("stage");
-const options=document.getElementById("options");
-const result=document.getElementById("result");
-const next=document.getElementById("next");
+      currentNodeId = nodeId;
+      ended = false;
+      isLocked = false;
+      statusBadgeEl.textContent = "状态：进行中";
+      updateProgress();
 
-function load(){
-  let s=story[step];
-  stage.innerText=s.text;
-  options.innerHTML="";
-  result.style.display="none";
-  next.style.display="none";
-  s.opt.forEach(o=>{
-    let btn=document.createElement("button");
-    btn.className="btn";
-    btn.innerText=o.t;
-    btn.onclick=()=>choose(o);
-    options.appendChild(btn);
-  });
-}
+      resultEl.style.display = "none";
+      resultEl.className = "result";
+      restartBtn.style.display = "none";
+      traceBtn.style.display = path.length ? "inline-block" : "none";
 
-function choose(o){
-  path.push(o.p);
-  if(o.e){
-    showEnd(o.e);
-    sendData(o.e);
-  }else{
-    step=o.n; // 这里直接赋值整数索引，确保流程继续
-    load();
+      stageEl.innerText = node.text;
+      optionsEl.innerHTML = "";
+
+      node.options.forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.className = "btn";
+        btn.innerText = opt.text;
+        btn.onclick = () => handleChoice(opt);
+        optionsEl.appendChild(btn);
+      });
+    } catch (err) {
+      showRuntimeError(err);
+    }
   }
-}
 
-function showEnd(e){
-  options.innerHTML="";
-  stage.innerText=endText[e].title;
-  result.style.display="block";
-  result.className="result fail";
-  result.innerText=endText[e].desc;
-  next.style.display="block";
-  next.innerText="重新体验";
-  next.onclick=()=>location.reload();
-}
+  function disableOptions() {
+    const buttons = optionsEl.querySelectorAll("button");
+    buttons.forEach(btn => btn.disabled = true);
+  }
 
-function sendData(r){
-  fetch(API+"?path="+encodeURIComponent(path.join("→"))+"&result="+r)
-}
+  function handleChoice(option) {
+    if (isLocked || ended) return;
+    isLocked = true;
+    disableOptions();
 
-load();
+    path.push(option.path);
+
+    // 模拟更自然一点的过渡
+    setTimeout(() => {
+      if (option.end) {
+        showEnding(option.end);
+        sendData(option.end, path);
+      } else if (option.next) {
+        renderNode(option.next);
+      } else {
+        showRuntimeError(new Error("当前选项既没有 next 也没有 end"));
+      }
+    }, 180);
+  }
+
+  function showEnding(endKey) {
+    const endData = endings[endKey];
+    if (!endData) {
+      showRuntimeError(new Error(`未找到结局：${endKey}`));
+      return;
+    }
+
+    ended = true;
+    isLocked = false;
+    optionsEl.innerHTML = "";
+    stageEl.innerText = endData.title;
+    resultEl.style.display = "block";
+    resultEl.className = `result ${endData.cls}`;
+    resultEl.innerHTML = `<strong>${endData.desc}</strong>`;
+    restartBtn.style.display = "inline-block";
+    traceBtn.style.display = "inline-block";
+    statusBadgeEl.textContent = "状态：已结束";
+    progressBarEl.style.width = "100%";
+  }
+
+  function showRuntimeError(err) {
+    console.error(err);
+    ended = true;
+    isLocked = false;
+    optionsEl.innerHTML = "";
+    stageEl.innerText = "⚠️ 游戏运行异常";
+    resultEl.style.display = "block";
+    resultEl.className = "result fail";
+    resultEl.innerHTML = `
+      <strong>出现错误，当前流程已中断。</strong><br>
+      错误信息：${escapeHtml(err.message || String(err))}
+    `;
+    restartBtn.style.display = "inline-block";
+    traceBtn.style.display = path.length ? "inline-block" : "none";
+    statusBadgeEl.textContent = "状态：异常中断";
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
+
+  function sendData(result, pathArr) {
+    const url =
+      `${API}?path=${encodeURIComponent(pathArr.join("→"))}&result=${encodeURIComponent(result)}`;
+
+    fetch(url, { method: "GET", mode: "cors" })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`上报失败，HTTP ${res.status}`);
+        }
+        return res.text().catch(() => "");
+      })
+      .then(() => {
+        console.log("结果已上报");
+      })
+      .catch(err => {
+        // 上报失败不影响游戏体验
+        console.warn("上报失败：", err.message);
+      });
+  }
+
+  restartBtn.onclick = () => {
+    currentNodeId = "start";
+    path = [];
+    isLocked = false;
+    ended = false;
+    traceEl.style.display = "none";
+    traceEl.innerText = "";
+    renderNode("start");
+  };
+
+  traceBtn.onclick = () => {
+    if (!path.length) return;
+    traceEl.style.display = "block";
+    traceEl.innerHTML = `<strong>本次路径：</strong> ${escapeHtml(path.join(" → "))}`;
+  };
+
+  renderNode("start");
 </script>
 </body>
 </html>
