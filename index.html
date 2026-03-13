@@ -4,82 +4,20 @@
 <meta charset="UTF-8">
 <title>您的电话来电了</title>
 <style>
-body{
-  background:#c0392b;
-  font-family:微软雅黑;
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  margin:0;
-}
-.game{
-  width:700px;
-  background:#d32f2f;
-  padding:30px;
-  border-radius:25px;
-  box-shadow:0 15px 30px rgba(0,0,0,0.3);
-}
-.title{
-  text-align:center;
-  font-size:28px;
-  margin-bottom:10px;
-}
-.subtitle{
-  text-align:center;
-  font-size:14px;
-  opacity:0.8;
-  margin-bottom:25px;
-}
-.stage{
-  background:white;
-  color:#333;
-  padding:25px;
-  border-radius:20px;
-  min-height:120px;
-  line-height:1.8;
-}
-.options{
-  margin-top:20px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
-.btn{
-  padding:15px;
-  border-radius:15px;
-  border:none;
-  font-size:15px;
-  cursor:pointer;
-  background:white;
-  color:#b71c1c;
-  font-weight:bold;
-}
-.btn:hover{
-  background:#b71c1c;
-  color:white;
-}
-.next{
-  margin-top:20px;
-  background:#ffb74d;
-  border:none;
-  padding:12px 30px;
-  border-radius:30px;
-  font-weight:bold;
-  cursor:pointer;
-}
-.result{
-  margin-top:20px;
-  padding:15px;
-  border-radius:15px;
-  display:none;
-}
+body{background:#c0392b;font-family:微软雅黑;color:white;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}
+.game{width:700px;background:#d32f2f;padding:30px;border-radius:25px;box-shadow:0 15px 30px rgba(0,0,0,0.3);}
+.title{text-align:center;font-size:28px;margin-bottom:10px;}
+.subtitle{text-align:center;font-size:14px;opacity:0.8;margin-bottom:25px;}
+.stage{background:white;color:#333;padding:25px;border-radius:20px;min-height:120px;line-height:1.8;}
+.options{margin-top:20px;display:flex;flex-direction:column;gap:12px;}
+.btn{padding:15px;border-radius:15px;border:none;font-size:15px;cursor:pointer;background:white;color:#b71c1c;font-weight:bold;}
+.btn:hover{background:#b71c1c;color:white;}
+.next{margin-top:20px;background:#ffb74d;border:none;padding:12px 30px;border-radius:30px;font-weight:bold;cursor:pointer;}
+.result{margin-top:20px;padding:15px;border-radius:15px;display:none;}
 .success{background:#2e7d32;}
 .fail{background:#b71c1c;}
 </style>
 </head>
-
 <body>
 <div class="game">
   <div class="title">📞 您的电话来电了</div>
@@ -91,10 +29,10 @@ body{
 </div>
 
 <script>
-const API="https://script.google.com/macros/s/AKfycbyC6mB1KOOJ8mJg4VwIJQMC7F8oMd0c0XtE0ozLrleZQIW11L5hX-T9-fS5JrfYTFk/exec"
+const API="https://script.google.com/macros/s/AKfycbyC6mB1KOOJ8mJg4VwIJQMC7F8oMd0c0XtE0ozLrleZQIW11L5hX-T9-fS5JrfYTFk/exec";
 
-let step=0
-let path=[]
+let step=0;
+let path=[];
 
 const story=[
   {text:`晚上20:15，你刚结束一天加班。手机突然响起，一个陌生号码。`,
@@ -129,7 +67,7 @@ const story=[
 “这事出现了点意外，现在需要处理，你先加我QQ，我发资料给你。”`,
    opt:[
      {t:"拒绝加QQ",e:"safe",p:"拒绝QQ"},
-     {t:"添加QQ",n:5,p:"加QQ"}  // 索引调整
+     {t:"添加QQ",n:5,p:"加QQ"} // 正确跳到下一个节点：合同截图
    ]
   },
   {text:`QQ里，对方发来“合同截图”。并发语音：
@@ -155,68 +93,62 @@ const story=[
      {t:"继续转账",e:"bad",p:"18.8万"}        // 损失28.8万
    ]
   }
-]
+];
 
 const endText={
   safe:{title:"✅ 防骗成功",desc:"你保持警惕，没有给骗子机会。"},
   mid:{title:"⚠️ 已损失4万元",desc:"你转账4万后及时醒悟，避免进一步损失。"},
   real:{title:"⚠️ 已损失10万元",desc:"你转了4万+6万后才意识到问题，损失10万元。"},
   bad:{title:"💸 损失28.8万元",desc:"你完全相信骗子，造成巨大损失28.8万元。"}
-}
+};
 
-const stage=document.getElementById("stage")
-const options=document.getElementById("options")
-const result=document.getElementById("result")
-const next=document.getElementById("next")
+const stage=document.getElementById("stage");
+const options=document.getElementById("options");
+const result=document.getElementById("result");
+const next=document.getElementById("next");
 
 function load(){
-  let s=story[step]
-  stage.innerText=s.text
-  options.innerHTML=""
-  result.style.display="none"
-  next.style.display="none"
+  let s=story[step];
+  stage.innerText=s.text;
+  options.innerHTML="";
+  result.style.display="none";
+  next.style.display="none";
   s.opt.forEach(o=>{
-    let btn=document.createElement("button")
-    btn.className="btn"
-    btn.innerText=o.t
-    btn.onclick=()=>choose(o)
-    options.appendChild(btn)
-  })
+    let btn=document.createElement("button");
+    btn.className="btn";
+    btn.innerText=o.t;
+    btn.onclick=()=>choose(o);
+    options.appendChild(btn);
+  });
 }
 
 function choose(o){
-  path.push(o.p)
+  path.push(o.p);
   if(o.e){
-    showEnd(o.e)
-    sendData(o.e)
+    showEnd(o.e);
+    sendData(o.e);
   }else{
-    result.style.display="block"
-    result.className="result success"
-    result.innerText="⚠️ 你继续操作"
-    next.style.display="block"
-    next.onclick=()=>{
-      step=o.n
-      load()
-    }
+    step=o.n; // 这里直接赋值整数索引，确保流程继续
+    load();
   }
 }
 
 function showEnd(e){
-  options.innerHTML=""
-  stage.innerText=endText[e].title
-  result.style.display="block"
-  result.className="result fail"
-  result.innerText=endText[e].desc
-  next.style.display="block"
-  next.innerText="重新体验"
-  next.onclick=()=>location.reload()
+  options.innerHTML="";
+  stage.innerText=endText[e].title;
+  result.style.display="block";
+  result.className="result fail";
+  result.innerText=endText[e].desc;
+  next.style.display="block";
+  next.innerText="重新体验";
+  next.onclick=()=>location.reload();
 }
 
 function sendData(r){
   fetch(API+"?path="+encodeURIComponent(path.join("→"))+"&result="+r)
 }
 
-load()
+load();
 </script>
 </body>
 </html>
